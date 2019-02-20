@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <style type="text/css">
+    input[type="button"] { width:32px; }
+    input[type="number"] { text-align:right; width:138px; }
+  </style>
+
+  <script>
+    var lastEv;
+
+    function onImgClick(ev)
+    {
+       lo = document.getElementById("log");
+       lastEv = ev;
+       act = document.getElementById("actName");
+       act.value = ev.target.name
+       centX = (ev.x - ev.target.x);
+       centY = (ev.y - ev.target.y);
+       
+       document.getElementById("centerX").value = centX;
+       document.getElementById("centerY").value = centY;
+       img = document.getElementById("frimg");
+       
+       lo.innerHTML = ev.target.name + ": (" + centX + ", " + centY +
+       ")<br />ev("  + ev.x        + ", " + ev.y        + 
+       ")<br />img(" + img.x       + ", " + img.y       + 
+       ")<br />trg(" + ev.target.x + ", " + ev.target.y + ")";
+       document.getElementById("fraForm").submit(); 
+    }
+
+    function onClick(el)
+    {
+       lo = document.getElementById("log");
+       act = document.getElementById("actName");
+       act.value = el.name
+       lo.innerText = "onClick() " + el.name
+
+       if (el.name == "zoomin")  { tel = document.getElementsByName("scale")[0];  lo.innerText += tel.value; }
+       if (el.name == "zoomout") { tel = document.getElementsByName("scale")[0];  lo.innerText += tel.value; }
+       if (el.name == "wadd")    { tel = document.getElementsByName("width")[0];  lo.innerText += tel.value; }         
+       if (el.name == "wsub")    { tel = document.getElementsByName("width")[0];  lo.innerText += tel.value; }
+       if (el.name == "hadd")    { tel = document.getElementsByName("height")[0]; lo.innerText += tel.value; }         
+       if (el.name == "hsub")    { tel = document.getElementsByName("height")[0]; lo.innerText += tel.value; }
+       if (el.name == "xsub")    { tel = document.getElementsByName("x0")[0];     lo.innerText += tel.value; }         
+       if (el.name == "xadd")    { tel = document.getElementsByName("x0")[0];     lo.innerText += tel.value; }
+       if (el.name == "ysub")    { tel = document.getElementsByName("y0")[0];     lo.innerText += tel.value; }         
+       if (el.name == "yadd")    { tel = document.getElementsByName("y0")[0];     lo.innerText += tel.value; }
+       document.getElementById("fraForm").submit(); 
+    }
+  </script>
+</head>
+<body>
+  
+  <table border="0"><tr><td valign="top">
+  <h3 align="center">{{.Title}}</h3>
+  <form id="fraForm" action="" method="GET">
+    <table cellpadding="1" cellspacing="0" border="0"> 
+      <tr>
+        <td align="right">Scale:</td>
+        <td>              <input name="scale"   type="text"   value="{{.scale}}" /></td>
+        <td align="right"><input name="zoomout" type="button" value="-" onclick="onClick(this)" /></td>
+        <td align="left"> <input name="zoomin"  type="button" value="+" onclick="onClick(this)" /></td>
+      </tr>
+      <tr>
+        <td align="right">Width:</td>   
+        <td>              <input name="width" type="number" step="16" min="128" value="{{.width}}" /></td>
+        <td align="right"><input name="wsub"  type="button" value="-" onclick="onClick(this)" /></td>
+        <td align="left"> <input name="wadd"  type="button" value="+" onclick="onClick(this)" /></td>
+      </tr>
+      <tr><td align="right">Height:</td>
+        <td>              <input name="height" type="number" step="16" min="128" value="{{.height}}" /></td>
+        <td align="right"><input name="hsub"   type="button" value="-" onclick="onClick(this)" /></td>
+        <td align="left"> <input name="hadd"   type="button" value="+" onclick="onClick(this)" /></td>
+      </tr>
+      <tr>
+        <td align="right">x0:</td>
+        <td>              <input name="x0"   type="text"   value="{{.x0}}" /></td>
+        <td align="right"><input name="xadd" type="button" value="<" onclick="onClick(this)" /></td>
+        <td align="left"> <input name="xsub" type="button" value=">" onclick="onClick(this)" /></td>
+      </tr>
+      <tr>
+        <td align="right">y0:</td>
+        <td>              <input name="y0"   type="text"   value="{{.y0}}" /></td>
+        <td align="right"><input name="yadd" type="button" value="^" onclick="onClick(this)" /></td>
+        <td align="left"> <input name="ysub" type="button" value="v" onclick="onClick(this)" /></td>
+      </tr>
+      <tr>
+        <td align="right">max iter:</td>
+        <td colspan="2"><input type="number" min="16" name="maxIter" step="16" value="{{.maxIter}}" /></td>
+<!--         <input type="range" name="amountRange" min="0" max="20" value="0" oninput="this.form.amountInput.value=this.value" />
+         <input type="number" name="amountInput" min="0" max="20" value="0" oninput="this.form.amountRange.value=this.value" />
+-->
+      </tr>
+      <tr>
+        <td align="right">paralel:</td>
+        <td colspan="2"><input type="number" min="1" step="1" name="paralel" value="{{.paralel}}" /></td>
+<!--         <input type="range" name="amountRange" min="0" max="20" value="0" oninput="this.form.amountInput.value=this.value" />
+         <input type="number" name="amountInput" min="0" max="20" value="0" oninput="this.form.amountRange.value=this.value" />
+-->
+      </tr>
+      <tr><td align="right">Axes:</td><td colspan="2" align="left"><input name="showAxes" type="checkbox" {{.showAxes}} /></td>
+      </tr>
+      <tr><td align="right">Alt method:</td><td colspan="1" align="left"><input name="altMethod" type="checkbox" {{.altMethod}} /></td>
+      </tr>
+      <tr>
+         <td align="right">Palette:</td>
+         <td colspan="1" align="left">
+           <select name="selPal" onchange="onClick(this)">
+                   {{range .palletes}}
+                    <option value="{{.Val}}" {{if .Sel}}selected{{end}}>{{.Txt}}</option>
+                   {{end}}
+                </select>
+         </td>
+      </tr>
+      <tr><td colspan="3" align="center"><input type="submit" name="sendForm" value="Calculate!" /></td></tr>
+    </table>
+    <input type="hidden" id="actName" name="actName" value="none" />
+    <input type="hidden" id="centerX" name="centerX" value="0" />
+    <input type="hidden" id="centerY" name="centerY" value="0" />
+  </form>
+  <div id="log">{{.log}}</div>
+  </td><td valign="top">
+  <!--div style="border:1px solid blue;"-->
+    <img src="data:image/jpg;base64,{{.Image}}" name="frimg" id="frimg" onclick="onImgClick(event)">
+  <!--/div-->
+  </td></tr></table>
+
+</body>
+</html>
